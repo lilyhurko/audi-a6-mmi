@@ -1,0 +1,29 @@
+import { useState } from 'react'
+import { calculateRoute, currentLocation, destinations, xs, ys } from './model'
+import Icon from './Icons'
+export default function Navigation({screen,go,map,setMap,onRoute,query,setQuery}){
+ const [destination,setDestination]=useState(null),[guiding,setGuiding]=useState(false),[zoom,setZoom]=useState(1),[pan,setPan]=useState({x:0,y:0})
+ const route=destination?calculateRoute(destination):null
+ const night=map.color!=='Dzień'
+ const select=place=>{setDestination(place);setGuiding(false);go('nav-preview')}
+ const mapView=<div className={`map-canvas ${night?'night':'day'} ${map.view==='Mapa drogi 3D'?'perspective-map':''}`}>
+ <svg viewBox={`${pan.x+700-700/zoom} ${pan.y+240-240/zoom} ${1400/zoom} ${480/zoom}`} aria-label="Mapa demonstracyjna z ulicami i wybranym celem" role="img">
+  <rect width="1400" height="480" className="map-ground"/>
+  <path d="M40 0 130 0 300 480 220 480Z" fill="#14383e"/><path d="M150 40h300v130H150ZM920 240h360v170H920Z" className="map-park"/>
+  {xs.slice(0,-1).flatMap((x,i)=>ys.slice(0,-1).map((y,j)=><g key={`${i}-${j}`} fill={night?'#263036':'#d3d2c9'} opacity=".7"><rect x={x+27} y={y+15} width="58" height="25"/><rect x={x+100} y={y+18} width="68" height="60"/><rect x={x+30} y={y+50} width="55" height="28"/></g>))}
+  {xs.map((x,i)=><g key={x}><path d={`M${x} 0V480`} className="map-road-edge"/><path d={`M${x} 0V480`} className="map-road"/><text x={x+18} y={350} transform={`rotate(-90 ${x+18} 350)`} className="street-label">{['ul. Północna','al. Parkowa','ul. Centralna','ul. Fabryczna','ul. Odkrywców','ul. Dworcowa','ul. Wschodnia'][i]}</text></g>)}
+  {ys.map((y,i)=><g key={y}><path d={`M0 ${y}H1400`} className="map-road-edge"/><path d={`M0 ${y}H1400`} className="map-road"/><text x={580} y={y-17} className="street-label">{['ul. Lipowa','ul. Ogrodowa','al. Główna','ul. Południowa'][i]}</text></g>)}
+  {route&&<><polyline points={route.points.map(p=>`${p.x},${p.y}`).join(' ')} fill="none" stroke="#052d36" strokeWidth="23" strokeLinejoin="round"/><polyline points={route.points.map(p=>`${p.x},${p.y}`).join(' ')} fill="none" stroke="#48e4ee" strokeWidth="13" strokeLinejoin="round"/></>}
+  {destinations.map(d=><g key={d.id} className="map-marker" onClick={()=>select(d)} role="button" tabIndex="0" aria-label={d.name} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(d)}}}><circle cx={d.x} cy={d.y} r="17" fill={destination?.id===d.id?'#e84848':'#d9dbc3'} stroke="#17242a" strokeWidth="3"/><text x={d.x+23} y={d.y-22} className="place-label">{d.name}</text></g>)}
+  <g transform={`translate(${currentLocation.x} ${currentLocation.y})`}><circle r="34" fill="#071b24a0" stroke="#eee9cf" strokeWidth="4"/><path d="m0-24 18 42L0 9-18 18Z" fill="#31ebed" stroke="white" strokeWidth="2"/></g>
+ </svg>
+ <div className="map-tools"><button onClick={()=>go('nav-search')}><Icon name="search"/>Szukaj</button><button aria-label="Ustawienia nawigacji" onClick={()=>go('nav-settings')}><Icon name="settings"/></button></div>
+ <div className="map-zoom"><button aria-label="Przybliż mapę" onClick={()=>setZoom(Math.min(2.5,zoom+.25))}>+</button><button aria-label="Oddal mapę" onClick={()=>setZoom(Math.max(.7,zoom-.25))}>−</button><button aria-label="Wyśrodkuj mapę" onClick={()=>{setPan({x:0,y:0});setZoom(1)}}>⌖</button></div>
+ <div className="map-pan"><button aria-label="Przesuń mapę w lewo" onClick={()=>setPan({...pan,x:pan.x-100})}>‹</button><button aria-label="Przesuń mapę w prawo" onClick={()=>setPan({...pan,x:pan.x+100})}>›</button></div>
+ <small className="map-disclaimer">Mapa demonstracyjna · fikcyjne adresy</small>
+ {guiding&&destination&&<div className="guidance"><span>↱</span><div>{destination.x===currentLocation.x?'Jedź prosto':`Za ${Math.round(Math.abs(destination.x-currentLocation.x)*3.4)} m skręć w ${destination.x>currentLocation.x?'lewo':'prawo'}`}<small>{destination.name} · {route.minutes} min · {(route.distance/1000).toFixed(1)} km</small></div><button onClick={()=>{setGuiding(false);go('navigation')}}>Zakończ</button></div>}
+ </div>
+ if(screen==='nav-settings')return <div className="settings-scroll"><h3>Kolory mapy</h3><div className="segments">{['Automatycznie','Dzień','Noc'].map(v=><button key={v} className={map.color===v?'selected':''} onClick={()=>setMap({...map,color:v})}>{v}</button>)}</div><h3>Ustawienie mapy</h3><div className="segments">{['Mapa drogi 2D','2D-północ','Mapa drogi 3D','Podgląd'].map(v=><button key={v} className={map.view===v?'selected':''} onClick={()=>setMap({...map,view:v})}>{v}</button>)}</div><h3>Automatyczny zoom</h3><div className="segments">{['Włącz','Skrzyżowanie','Wyłącz'].map(v=><button key={v} className={map.zoom===v?'selected':''} onClick={()=>setMap({...map,zoom:v})}>{v}</button>)}</div></div>
+ if(screen==='nav-search')return <div className="nav-search"><label className="mmi-search">Dokąd chcesz jechać?<input aria-label="Szukaj celu" placeholder="Miejsce lub adres" value={query} onChange={e=>setQuery(e.target.value)}/></label><div className="mmi-list">{destinations.filter(d=>(d.name+' '+d.address).toLocaleLowerCase('pl').includes(query.toLocaleLowerCase('pl'))).map(d=><button key={d.id} onClick={()=>select(d)}><Icon name="navigation"/><span>{d.name}<small>{d.address}</small></span><b>›</b></button>)}{!destinations.some(d=>(d.name+' '+d.address).toLocaleLowerCase('pl').includes(query.toLocaleLowerCase('pl')))&&<p className="empty-state">Nie znaleziono celu. Wybierz jedną z lokalizacji demonstracyjnych.</p>}</div></div>
+ return <div className="navigation-view">{mapView}{screen==='nav-preview'&&destination&&<div className="route-summary"><div><strong>{destination.name}</strong><small>{destination.address}</small></div><span>{route.minutes} min · {(route.distance/1000).toFixed(1)} km</span><button data-aoi="AOI_cel" onClick={()=>{setGuiding(true);go('navigation');onRoute(destination)}}>Rozpocznij prowadzenie ›</button></div>}</div>
+}

@@ -1,122 +1,91 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useLayoutEffect, useRef, useState } from 'react'
+import Icon from './Icons'
+import { Car, Cockpit, TileArt } from './Graphics'
+import { ClimatePanel } from './Climate'
+import Navigation from './Navigation'
+import Media from './Media'
+import { useAudioLibrary } from './useAudioLibrary'
+import { initialClimate, scenarios } from './model'
+import { useDeviceClock } from './useDeviceClock'
+import CarPhoto from './CarPhoto'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+const mediaScreens=['media','source','recent','artists','albums','songs','playlists','genres','files','frequent','music-search','player']
+const navScreens=['navigation','nav-search','nav-preview','nav-settings']
+const titles={scenarios:'Wybierz scenariusz',home:'Menu główne',media:'Medioteka',source:'Źródło',recent:'Ostatnio odtwarzane utwory',artists:'Wykonawcy',albums:'Albumy',songs:'Utwory',playlists:'Listy odtwarzania',genres:'Gatunki muzyczne',files:'Moja muzyka',frequent:'Często odtwarzane utwory','music-search':'Wyszukiwanie',player:'Odtwarzanie',navigation:'Nawigacja','nav-search':'Wyszukiwanie celu','nav-preview':'Trasa','nav-settings':'Ustawienia mapy',vehicle:'Samochód',climate:'Klimatyzacja','climate-settings':'Ustawienia klimatyzacji',settings:'Ustawienia',sound:'Dźwięk',general:'Ogólne',brightness:'Wskazanie i jasność',phone:'Telefon','phone-search':'Kontakty','phone-favorites':'Ulubione','phone-dial':'Wybierz numer',radio:'Radio',drive:'Audi drive select',lights:'Światła i widoczność',seats:'Ustawienie fotela',favorites:'Ulubione',connection:'Podłączone urządzenia',maintenance:'Pielęgnacja systemu'}
+const homeTiles=[['radio','RADIO','radio'],['media','MEDIA','media'],['phone','TELEFON','phone'],['navigation','NAWIGACJA','navigation'],['connection','Połączenie telefonu','navigation'],['vehicle','POJAZD','vehicle'],['favorites','ULUBIONE','star'],['settings','USTAWIENIA','settings']]
+const contacts=[{name:'Anna Nowak',number:'500 100 200'},{name:'Piotr Kowalski',number:'500 300 400'},{name:'Jan Wiśniewski',number:'500 500 600'}]
+function App(){
+ const clock=useDeviceClock()
+ const [scenario,setScenario]=useState(null),[screen,setScreen]=useState('scenarios'),[history,setHistory]=useState([])
+ const [climate,setClimate]=useState({...initialClimate}),[map,setMap]=useState({color:'Automatycznie',view:'Mapa drogi 3D',zoom:'Włącz'})
+ const [settings,setSettings]=useState({bass:0,treble:0,brightness:80,drive:'auto',rain:true,ambient:true,language:'Polski',units:'°C',seat:0}),[query,setQuery]=useState(''),[keyboardClosed,setKeyboardClosed]=useState(false)
+ const [notice,setNotice]=useState(''),[result,setResult]=useState(null),[favoriteContacts,setFavoriteContacts]=useState([]),[dial,setDial]=useState(''),[call,setCall]=useState(null)
+ const events=useRef([]),startTime=useRef(0),upper=useRef(null),playOrigin=useRef(null),maxRestore=useRef(null)
+ const record=(type,data={})=>{if(scenario&&!result)events.current.push({version:'A-native',scenario:scenario.id,screen,type,time_ms:Math.round(performance.now()-startTime.current),...data})}
+ const finish=data=>{if(!scenario||result)return;record('task_success',data);setResult({seconds:((performance.now()-startTime.current)/1000).toFixed(1),activations:events.current.filter(e=>e.type==='activation').length,back:events.current.filter(e=>e.type==='back').length})}
+ const library=useAudioLibrary(track=>{record('audio_playing',{track:track.title});if(scenario?.id==='S1'&&track.id==='demo-night'&&playOrigin.current==='frequent')finish({track:track.title})})
+ const go=next=>{if(next===screen)return;if(next==='player')playOrigin.current=screen;record('screen_change',{destination:next});setHistory(prev=>[...prev,screen]);setScreen(next);setQuery('');setKeyboardClosed(false);setNotice('')}
+ const back=()=>{record('back');setScreen(history.at(-1)||'home');setHistory(history.slice(0,-1));setQuery('');setNotice('')}
+ const start=item=>{if(library.active&&library.playing)library.toggle();setScenario(item);setResult(null);setClimate({...initialClimate});setHistory([]);setScreen('home');setQuery('');setNotice('');startTime.current=performance.now();events.current=[{version:'A-native',scenario:item.id,type:'task_start',screen:'home',time_ms:0}]}
+ const updateClimate=patch=>{let changes=patch;if('max'in patch&&patch.max!==climate.max){if(patch.max){maxRestore.current={left:climate.left,right:climate.right,ac:climate.ac,fan:climate.fan};changes={...patch,left:16,right:16,ac:true,fan:7,power:true}}else changes={...patch,...maxRestore.current,max:false}}const next={...climate,...changes};if(next.sync){if('right'in patch&&!('left'in patch))next.left=next.right;else next.right=next.left}setClimate(next);record('climate_change',next);if(scenario?.id==='S3'&&next.left===22&&next.right===22&&next.sync&&next.power)finish(next)}
+ useLayoutEffect(()=>{
+  if(!scenario||result)return
+  const snapshot=()=>{
+   const aoi=[...document.querySelectorAll('[data-aoi]')].map(node=>{const r=node.getBoundingClientRect();return {name:node.dataset.aoi,label:node.getAttribute('aria-label')||node.textContent,x:r.x,y:r.y,width:r.width,height:r.height}}).filter(r=>r.width&&r.height)
+   events.current.push({version:'A-native',scenario:scenario.id,type:'screen_presented',screen,time_ms:Math.round(performance.now()-startTime.current),viewport:{width:innerWidth,height:innerHeight},aoi})
+  }
+  snapshot();window.addEventListener('resize',snapshot);return()=>window.removeEventListener('resize',snapshot)
+ },[screen,scenario,result])
+ const capture=e=>{const target=e.target.closest('button,input,label');record(target?'activation':'outside_target',{control:target?.getAttribute('aria-label')||target?.textContent?.slice(0,120)||null,x:e.clientX,y:e.clientY,input:e.detail===0?'keyboard':'pointer'})}
+ const exportLog=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({scenario,result,events:events.current},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`MMI_A_${scenario.id}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+ const isMedia=mediaScreens.includes(screen),isNav=navScreens.includes(screen),isClimate=['vehicle','climate','climate-settings','drive','lights','seats'].includes(screen)
+ const color=isMedia||screen==='radio'?'#efbb26':isNav?'#15d6dc':isClimate?'#ed1b2e':screen.startsWith('phone')?'#8bcb21':'#d8d6c6'
+ const section=isMedia?'Urządzenie USB 2':isNav?'Nawigacja':isClimate?'Samochód':screen.startsWith('phone')?'Telefon':screen==='radio'?'Radio':screen==='scenarios'?'Badanie interfejsu':'Ustawienia'
+ const keyboard=['nav-search','music-search','phone-search','phone-dial'].includes(screen)&&!keyboardClosed
+ const tile=(path,label,icon)=> <button key={path} className="mmi-tile" onClick={()=>go(path)}><Icon name={icon}/><span>{label}</span></button>
+ const updateSetting=(key,value)=>{if(key==='bass'||key==='treble')library.setTone(key,value);setSettings({...settings,[key]:value});record('setting_change',{key,value})}
+ const slider=(label,key,min=-5,max=5)=><div className="setting-slider" key={key}><h3>{label}</h3><div><button aria-label={`Zmniejsz ${label}`} disabled={settings[key]<=min} onClick={()=>updateSetting(key,Math.max(min,settings[key]-1))}>−</button><input aria-label={label} type="range" min={min} max={max} value={settings[key]} onChange={e=>updateSetting(key,Number(e.target.value))}/><button aria-label={`Zwiększ ${label}`} disabled={settings[key]>=max} onClick={()=>updateSetting(key,Math.min(max,settings[key]+1))}>+</button></div><p><span>Min</span><span>{settings[key]}</span><span>Max</span></p></div>
+ return <main className="app-shell" style={{'--section':color}}>
+  {library.audioElement}
+  <header className="study-header"><div><span className="edition">A</span><strong>MMI</strong><span>Interaktywna symulacja</span></div><button onClick={()=>{setScenario(null);setResult(null);go('scenarios')}}>Wybór scenariusza</button></header>
+  {scenario&&<div className="task-strip"><span>{scenario.id}</span><p>{scenario.task}</p><button onClick={()=>start(scenario)}>Od początku ↻</button></div>}
+  <div className="dashboard" onClickCapture={capture}>
+   <div className="dashboard-trim"><div className="upper-bezel"><section className="upper-screen" ref={upper} aria-label="Górny ekran MMI" style={{'--screen-brightness':settings.brightness/100}}>
+    <div className="status-bar"><span className="cube">◇</span><span className="status-handle"/><span className="status-icons">♧ <span>ᛒ</span> ♙ ▯ <small>LTE</small> <time dateTime={clock.iso} title={`${clock.date} · ${clock.timezone}`} aria-label="Aktualny czas">{clock.time}</time></span></div>
+    <nav className="side-rail" aria-label="Skróty MMI">{[['home','Menu główne','home'],['radio','Radio','radio'],['media','Media','media'],['phone','Telefon','phone'],['navigation','Nawigacja','navigation']].map(([path,label,icon])=><button key={path} aria-label={label} className={(path==='media'&&isMedia)||(path==='navigation'&&isNav)||(path==='phone'&&screen.startsWith('phone'))||path===screen?'active':''} onClick={()=>go(path)}><Icon name={icon}/></button>)}</nav>
+    <div className="screen-main">
+     {!['home','scenarios'].includes(screen)&&<header className="screen-heading"><button aria-label="Wstecz" data-aoi="AOI_wstecz" onClick={back}><Icon name="back"/></button>{isMedia&&screen!=='source'&&<button className="source-button" onClick={()=>go('source')}>♬ Źródło</button>}<div><span>{section}</span><h1>{titles[screen]||screen}</h1></div><button aria-label={isNav?'Ustawienia nawigacji':'Ustawienia sekcji'} onClick={()=>go(isNav?'nav-settings':isClimate?'climate-settings':'settings')}><Icon name="settings"/></button></header>}
+     <div className={`screen-body ${['home','scenarios'].includes(screen)?'no-heading':''}`}>
+      {screen==='scenarios'&&<><div className="chooser-title"><h1>Wybierz scenariusz</h1><span>Wersja A</span></div><div className="icon-grid scenario-grid">{scenarios.map(item=><button key={item.id} className="mmi-tile" style={{'--tile-color':item.id==='S1'?'#edc137':item.id==='S2'?'#15d6dc':'#ed1b2e'}} onClick={()=>start(item)}><span className="scenario-id">{item.id}</span><TileArt name={item.icon}/><span>{item.title.toUpperCase()}</span></button>)}<button className="mmi-tile" onClick={()=>{setScenario(null);go('home')}}><Icon name="settings"/><span>SWOBODNA OBSŁUGA</span></button></div><p className="chooser-hint">Wybierz zadanie lub przeglądaj system bez pomiaru.</p></>}
+      {screen==='home'&&<><div className="icon-grid home-grid">{homeTiles.map(([path,label,icon])=><button className={`mmi-tile home-${path}`} key={path} onClick={()=>go(path)}><TileArt name={icon}/><span><Icon name={icon}/>{label}</span></button>)}</div><div className="page-dots"><i/><i className="current"/><i/></div></>}
+      <div hidden={!isMedia} className="persistent-view"><Media screen={screen} go={go} library={library} query={query} setQuery={setQuery}/></div>
+      <div hidden={!isNav} className="persistent-view"><Navigation screen={screen} go={go} map={map} setMap={setMap} query={query} setQuery={setQuery} onRoute={d=>{record('route_started',{destination:d.name});if(scenario?.id==='S2'&&d.id==='science')finish({destination:d.name})}}/></div>
+      {screen==='vehicle'&&<div className="icon-grid">{[['drive','Audi drive select','vehicle'],['drive','Asystent wydajności','settings'],['seats','Fotele','phone'],['climate','Klimatyzacja','climate'],['lights','Światła i widoczność','radio'],['parking','Sygnalizacja parkowania','vehicle'],['assistance','Asysta kierowcy','vehicle'],['maintenance','Ustawienia i serwis','settings']].map(([path,label,icon],i)=><button key={i} className="mmi-tile" onClick={()=>['parking','assistance'].includes(path)?setNotice('System wspomagania: symulacja nie korzysta z czujników ani kamery pojazdu.'):go(path)}><Icon name={icon}/><span>{label}</span></button>)}</div>}
+      {screen==='climate'&&<div className="climate-upper"><Cockpit/><div className="climate-upper-buttons"><button aria-label="SYNC" data-aoi="AOI_cel" className={climate.sync?'active':''} aria-pressed={climate.sync} onClick={()=>updateClimate({sync:!climate.sync})}>SYNC</button><button className={!climate.power?'active':''} onClick={()=>updateClimate({power:!climate.power})}>OFF</button><button className={climate.max?'active':''} onClick={()=>updateClimate({max:!climate.max})}>A/C<small>MAX</small></button></div></div>}
+      {screen==='climate-settings'&&<div className="settings-scroll"><h3>Siła nawiewu</h3><div className="segments">{[1,2,3,4,5,6,7].map(n=><button key={n} className={climate.fan===n?'selected':''} onClick={()=>updateClimate({fan:n,power:true})}>{n}</button>)}</div><h3>Kierunek nawiewu</h3><div className="segments">{[['face','Twarz'],['feet','Nogi'],['windshield','Szyba']].map(([key,label])=><button key={key} className={climate.direction===key?'selected':''} onClick={()=>updateClimate({direction:key})}>{label}</button>)}</div><button className="setting-row" onClick={()=>updateClimate({sync:!climate.sync})}>Synchronizacja temperatury <span className={`toggle ${climate.sync?'on':''}`}/></button></div>}
+      {screen==='settings'&&<div className="icon-grid">{[['general','Ogólne','settings'],['brightness','Wskazanie i jasność','settings'],['general','Język i klawiatura','navigation'],['sound','Dźwięk','sound'],['maintenance','Pielęgnacja systemu','settings'],['connection','Użytkownicy','phone'],['connection','Podłączone urządzenia','phone'],['connection','Ustawienia połączeń','radio']].map(([p,l,i],index)=><button className="mmi-tile" key={index} onClick={()=>go(p)}><Icon name={i}/><span>{l}</span></button>)}</div>}
+      {screen==='sound'&&<div className="settings-scroll">{slider('Wysokie','treble')}{slider('Basy','bass')}<p className="setting-note">Korektor wpływa na odtwarzaną muzykę. Głośność ustawisz w odtwarzaczu.</p></div>}
+      {screen==='brightness'&&<div className="settings-scroll">{slider('Jasność MMI','brightness',35,100)}<div className="setting-row">Dolny wyświetlacz <span>{settings.brightness}%</span></div></div>}
+      {screen==='general'&&<div className="settings-scroll"><div className="setting-row">Data i czas <time dateTime={clock.iso}>{clock.date} · {clock.time}</time></div><label className="setting-row">Jednostki miar<select value={settings.units} onChange={e=>updateSetting('units',e.target.value)}><option>°C</option><option>°F</option></select></label><label className="setting-row">Język systemu<select value={settings.language} onChange={e=>{updateSetting('language',e.target.value);setNotice('Dostępna wersja językowa symulacji: polska.')}}><option>Polski</option></select></label><div className="setting-row">Informacje o wersji <span>MMI · prototyp A</span></div></div>}
+      {screen==='drive'&&<div className="drive-view"><div>{['efficiency','comfort','auto','dynamic','individual'].map(mode=><button key={mode} className={settings.drive===mode?'active':''} onClick={()=>updateSetting('drive',mode)}>{mode}</button>)}</div><CarPhoto/></div>}
+      {screen==='lights'&&<div className="lights-view"><div><button className="setting-row" onClick={()=>updateSetting('ambient',!settings.ambient)}>Oświetlenie ambiente <span className={`toggle ${settings.ambient?'on':''}`}/></button><button className="setting-row" onClick={()=>updateSetting('rain',!settings.rain)}>Czujnik deszczu <span className={`toggle ${settings.rain?'on':''}`}/></button></div><Car front/></div>}
+      {screen==='seats'&&<div className="seats-view"><Cockpit/><label>Położenie fotela<input type="range" min="0" max="10" value={settings.seat} onChange={e=>updateSetting('seat',Number(e.target.value))}/></label><p>Pozycja {settings.seat} / 10 · symulacja</p></div>}
+      {screen==='phone'&&<div className="icon-grid three">{tile('phone-search','Wyszukiwanie','settings')}{tile('phone-search','Lista połączeń','phone')}{tile('phone-favorites','Ulubione','star')}{tile('phone-search','Kontakty','phone')}{tile('phone-dial','Poczta głosowa','phone')}{tile('phone-dial','Wybierz numer','phone')}</div>}
+      {['phone-search','phone-favorites','favorites'].includes(screen)&&<div className="phone-list">{screen==='phone-search'&&<label className="mmi-search">Do kogo chcesz zadzwonić?<input aria-label="Szukaj kontaktu" value={query} onChange={e=>setQuery(e.target.value)}/></label>}<div className="mmi-list">{contacts.filter(c=>(screen==='phone-search'||favoriteContacts.includes(c.name))&&c.name.toLocaleLowerCase('pl').includes(query.toLocaleLowerCase('pl'))).map(c=><div className="contact-row" key={c.name}><button onClick={()=>setCall(c)}><Icon name="phone"/><span>{c.name}<small>{c.number}</small></span></button><button aria-label={`Ulubiony kontakt ${c.name}`} aria-pressed={favoriteContacts.includes(c.name)} onClick={()=>setFavoriteContacts(prev=>prev.includes(c.name)?prev.filter(n=>n!==c.name):[...prev,c.name])}>{favoriteContacts.includes(c.name)?'★':'☆'}</button></div>)}{screen!=='phone-search'&&!favoriteContacts.length&&<p className="empty-state">Nie utworzono żadnych Ulubionych.<button onClick={()=>go('phone-search')}>Otwórz kontakty</button></p>}</div></div>}
+      {screen==='phone-dial'&&<div className="dialer"><output>{dial||'Wybierz numer'}</output><div>{[...'123456789*0#'].map(n=><button key={n} onClick={()=>setDial(dial+n)}>{n}</button>)}</div><button aria-label="Usuń cyfrę" onClick={()=>setDial(dial.slice(0,-1))}>⌫</button><button disabled={!dial} onClick={()=>setCall({name:dial,number:dial})}>Połącz</button></div>}
+      {screen==='radio'&&<div className="radio-view"><h2>FM</h2><p>Stacje demonstracyjne</p><div className="mmi-list">{library.tracks.slice(0,3).map((track,i)=><button key={track.id} onClick={()=>{library.play(track);go('player')}}><Icon name="radio"/><span>Radio {['Classic','City','Relax'][i]}<small>{[89.5,96.4,102.8][i]} MHz · dźwięk demonstracyjny</small></span><b>›</b></button>)}</div></div>}
+      {screen==='connection'&&<div className="empty-state"><Icon name="phone"/><h2>Połączenie urządzenia</h2><p>Muzykę z urządzenia możesz dodać jako lokalne pliki audio.</p><button onClick={()=>go('media')}>Otwórz mediotekę</button></div>}
+      {screen==='maintenance'&&<div className="settings-scroll"><div className="setting-row">Wersja oprogramowania <span>MMI Simulation A · 1.0</span></div><button className="setting-row" onClick={()=>{setClimate({...initialClimate});library.setTone('bass',0);library.setTone('treble',0);setMap({color:'Automatycznie',view:'Mapa drogi 3D',zoom:'Włącz'});setSettings({bass:0,treble:0,brightness:80,drive:'auto',rain:true,ambient:true,language:'Polski',units:'°C',seat:0});setNotice('Przywrócono ustawienia symulacji. Biblioteka muzyki została zachowana.')}}>Przywróć ustawienia symulacji <b>›</b></button></div>}
+     </div>
+    </div>
+   </section></div></div>
+   <div className="lower-console" style={{filter:`brightness(${.45+settings.brightness/100*.55})`}}><ClimatePanel units={settings.units} value={climate} onChange={updateClimate} open={go} keyboard={keyboard} onKeyboard={()=>setKeyboardClosed(true)} query={screen==='phone-dial'?dial:query} setQuery={screen==='phone-dial'?setDial:setQuery}/><div className="physical-strip"><button onClick={()=>go('drive')}>⌃ <span>drive<br/>select</span> ⌄</button><button aria-label="Asysta kierowcy" onClick={()=>setNotice('Asysta kierowcy jest elementem symulacji, bez połączenia z pojazdem.')}>♧<small>OFF</small></button><button className="hazard" aria-label="Światła awaryjne" onClick={()=>setNotice('Światła awaryjne: przycisk demonstracyjny.')}>△</button><button aria-label="Odmrażanie przedniej szyby" onClick={()=>updateClimate({direction:'windshield',fan:7,power:true})}>▱<small>MAX</small></button><button aria-label="Ogrzewanie tylnej szyby" onClick={()=>setNotice('Ogrzewanie tylnej szyby włączone w symulacji.')}>▤<small>REAR</small></button></div></div>
+  </div>
+  {library.error&&<p className="notice" role="alert">{library.error}</p>}{notice&&<p className="notice" role="status">{notice}</p>}
+  {call&&<div className="modal-backdrop"><section className="call-modal" role="dialog" aria-modal="true" aria-label="Symulowane połączenie"><Icon name="phone"/><h2>{call.name}</h2><p>{call.number}</p><p>Połączenie demonstracyjne · bez wykonywania rzeczywistego telefonu</p><button autoFocus onClick={()=>setCall(null)}>Zakończ połączenie</button></section></div>}
+  {result&&<section className="result-panel" role="status"><div><small>ZADANIE UKOŃCZONE</small><h2>{scenario.title}</h2><p>{result.seconds} s · {result.activations} aktywacji · {result.back} powrotów</p></div><button onClick={exportLog}>Pobierz przebieg JSON</button><button onClick={()=>start(scenario)}>Powtórz</button></section>}
+  <footer className="app-footer"><span>WERSJA A · INTERFEJS ZBUDOWANY W KODZIE</span><span>Muzyka lokalna · nawigacja demonstracyjna · bez połączenia z samochodem</span></footer>
+ </main>
 }
-
 export default App
