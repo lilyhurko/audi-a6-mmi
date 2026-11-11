@@ -12,6 +12,38 @@ export function ClimatePanel({value,onChange,open,onKeyboard,keyboard,query,setQ
   </div>
   <div className="climate-bottom">{[
    ['leftHeat','Ogrzewanie fotela kierowcy',<Icon key="seat-heat" name="seatHeat"/>],['leftVent','Wentylacja fotela kierowcy',<Icon key="seat-vent" name="seatVent"/>],['ac','A/C','A/C'],['max','A/C MAX',<>A/C<small>MAX</small></>],['more','Więcej ustawień klimatyzacji','•••'],['power','OFF','OFF'],['recirculation','Obieg zamknięty',<Icon key="recirculation" name="recirculation"/>],['rightVent','Wentylacja fotela pasażera',<Icon key="seat-vent" name="seatVent"/>],['rightHeat','Ogrzewanie fotela pasażera',<Icon key="seat-heat" name="seatHeat"/>],
-  ].map(([key,label,icon])=><button key={key} aria-label={label} aria-pressed={key==='more'?undefined:key==='power'?!value.power:Boolean(value[key])} className={(key==='power'?!value.power:value[key])?'active':''} onClick={()=>key==='more'?open('climate'):['leftHeat','rightHeat','leftVent','rightVent'].includes(key)?onChange({[key]:(value[key]+1)%4}):key==='max'?onChange({max:!value.max}):onChange({[key]:!value[key]})}>{icon}{['leftHeat','rightHeat','leftVent','rightVent'].includes(key)&&value[key]>0&&<span className="heat-levels">{'▰'.repeat(value[key])}</span>}</button>)}</div>
+  ].map(([key, label, icon]) => {
+   const hasLevels = ['leftHeat', 'rightHeat', 'leftVent', 'rightVent'].includes(key)
+   const isActive = key === 'power' ? !value.power : Boolean(value[key])
+   const level = hasLevels ? value[key] : 0
+
+   function handleClick() {
+    if (key === 'more') {
+     open('climate')
+    } else if (hasLevels) {
+     onChange({ [key]: (level + 1) % 4 })
+    } else {
+     onChange({ [key]: !value[key] })
+    }
+   }
+
+   return (
+    <button
+     key={key}
+     aria-label={label}
+     aria-description={hasLevels ? `Poziom ${level} z 3` : undefined}
+     aria-pressed={key === 'more' ? undefined : isActive}
+     className={!hasLevels && isActive ? 'active' : undefined}
+     onClick={handleClick}
+    >
+     {icon}
+     {hasLevels && (
+      <span className={`seat-levels ${key.endsWith('Vent') ? 'seat-levels-cool' : ''}`} aria-hidden="true">
+       {[1, 2, 3].map(step => <span key={step} className={step <= level ? 'lit' : undefined}/>)}
+      </span>
+     )}
+    </button>
+   )
+  })}</div>
  </section>
 }
