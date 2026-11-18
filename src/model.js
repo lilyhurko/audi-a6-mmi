@@ -1,7 +1,18 @@
 export const scenarios = [
-  { id:'S1', title:'Media', icon:'media', task:'Odtwórz „Nocna trasa” z listy często odtwarzanych utworów.' },
-  { id:'S2', title:'Nawigacja', icon:'navigation', task:'Wybierz Centrum Nauki, a następnie rozpocznij prowadzenie.' },
-  { id:'S3', title:'Klimatyzacja', icon:'climate', task:'Ustaw 22°C po stronie kierowcy i włącz SYNC.' },
+  {id:'S1',title:'Oświetlenie wnętrza',icon:'vehicle',task:'Odszukaj ustawienia oświetlenia wnętrza i zmień jego kolor na niebieski.'},
+  {id:'S2',title:'Stacja radiowa',icon:'radio',task:'Znajdź stację Radio City i dodaj ją do ulubionych.'},
+  {id:'S3',title:'Nawigacja',icon:'navigation',task:'Wyszukaj adres „ul. Odkrywców 12” (Centrum Nauki) i ustaw go jako cel nawigacji.'},
+]
+export const radioStations = [
+  {id:'classic',name:'Radio Classic',frequency:'89,5 MHz'},
+  {id:'city',name:'Radio City',frequency:'96,4 MHz'},
+  {id:'relax',name:'Radio Relax',frequency:'102,8 MHz'}
+]
+export const ambientColors = [
+ {id:'czerwony',name:'Czerwony',hex:'#d32136'},
+ {id:'niebieski',name:'Niebieski',hex:'#2895eb'},
+ {id:'zielony',name:'Zielony',hex:'#48ba8b'},
+ {id:'biały',name:'Biały',hex:'#ffffff'}
 ]
 export const initialClimate = { left:21, right:23, sync:false, power:true, ac:true, max:false, autoLeft:true, autoRight:true, recirculation:false, leftHeat:0, rightHeat:0, leftVent:0, rightVent:0, fan:3, direction:'face' }
 export const demoTracks = [
