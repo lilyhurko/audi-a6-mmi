@@ -1,0 +1,15 @@
+.audi-lights{height:100%;display:flex;align-items:flex-start;gap:2cqw;padding:.5cqw 0}
+.audi-lights-list{width:65%;display:flex;flex-direction:column}
+.audi-menu-row{width:100%;min-height:5.8cqw;padding:.8cqw 1cqw;background:transparent;border:0;border-bottom:1px solid #bcb9a077;color:#f7f3de;text-align:left;display:flex;justify-content:space-between;align-items:center;font-size:2cqw;font-weight:500}
+.audi-menu-row>span:not(.toggle){font-size:3cqw;font-weight:300}
+.audi-menu-row:hover{background:#ffffff17}
+.audi-car-preview{width:35%;height:100%;display:grid;place-items:center;overflow:hidden}
+.audi-car-preview .car-graphic{width:100%;height:100%;max-height:100%}
+.audi-ambient{padding:1cqw 1.8cqw;color:#f3f0db}
+.audi-ambient>label{display:block;font-size:2.5cqw;margin-bottom:1.8cqw}
+.audi-ambient-controls{display:flex;align-items:center;gap:2.5cqw}
+.audi-ambient-controls button{width:5cqw;height:5cqw;border:1px solid #c7c1a7;border-bottom:2px solid #e6debf;background:linear-gradient(0deg,#77756955,transparent);font-size:3.2cqw;color:inherit}
+.audi-ambient-controls input{flex:1;min-width:0;accent-color:#d71729;height:2.5cqw}
+.audi-ambient-labels{display:flex;justify-content:space-between;margin:0 7.5cqw;font-size:1.8cqw}
+.audi-exterior-placeholder{padding:2cqw;color:#efeadb;font-size:2.3cqw}
+.audi-exterior-placeholder small{display:block;color:#c7c5b9;font-size:1.5cqw;line-height:1.5;max-width:85%;margin-top:1cqw}
