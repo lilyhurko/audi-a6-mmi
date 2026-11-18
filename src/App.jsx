@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import Icon from './Icons'
-import { Car, Cockpit, TileArt } from './Graphics'
+import { Cockpit, TileArt } from './Graphics'
 import { ClimatePanel } from './Climate'
 import Navigation from './Navigation'
 import Media from './Media'
