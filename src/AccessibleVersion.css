@@ -1,20 +1,22 @@
-.accessible-screen{position:absolute;inset:12% 3% 4% 10%;display:flex;flex-direction:column;color:#fff;font-family:Arial,sans-serif;text-shadow:none}
-.accessible-top{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #fff;padding:.3cqw 1cqw .7cqw;gap:1cqw;font-size:1.5cqw}
-.accessible-top strong{font-size:2.1cqw}
-.accessible-back{margin:.7cqw 0 0;align-self:flex-start;border:2px solid #fff;background:#202738;color:#fff;padding:.7cqw 1.5cqw;font-size:1.9cqw;min-height:4.5cqw}
-.accessible-content{overflow:auto;flex:1;padding:.7cqw 1cqw}
-.accessible-content h1{font-size:2.7cqw;margin:.3cqw 0 1cqw;font-weight:700}
-.accessible-content p{font-size:1.7cqw;margin:.5cqw 0 1.2cqw;line-height:1.3}
-.accessible-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw;height:68%}
-.accessible-grid button,.accessible-action{border:2px solid #fff;border-radius:.6cqw;background:#243750;color:#fff;min-height:6cqw;padding:1cqw;font-size:2cqw;font-weight:700;display:flex;align-items:center;justify-content:center;gap:.8cqw}
-.accessible-grid button svg,.accessible-action svg{width:3.2cqw;height:3.2cqw}
-.accessible-grid button{flex-direction:column}
-.accessible-grid button svg{width:5cqw;height:5cqw}
-.accessible-action{background:#174a64;min-width:50%}
-.accessible-action:disabled{opacity:.5}
-.accessible-screen button:focus-visible{outline:3px solid #ffdc55;outline-offset:3px}
-.accessible-temp{display:flex;align-items:center;justify-content:center;gap:2cqw;margin:1cqw 0}
-.accessible-temp button{font-size:4cqw;width:6cqw;height:6cqw;border:2px solid #fff;background:#243750;color:#fff}
-.accessible-temp output{font-size:4.4cqw;font-weight:700;min-width:12cqw;text-align:center}
-.upper-screen.version-b .side-rail{display:none}
-.upper-screen.version-b .accessible-screen{left:3%}
+/* Wersja B korzysta z tego samego układu i palety co oryginalny ekran MMI. */
+.b-mmi .screen-heading h1{font-weight:600}
+.b-mmi .screen-heading button{min-width:5.2cqw}
+.b-mmi button:focus-visible{outline:3px solid #ffdc58;outline-offset:2px}
+.b-mmi .mmi-tile{min-height:4.6cqw}
+.b-mmi .mmi-tile>span:last-child{font-size:1.75cqw}
+.b-setting-panel{height:100%;padding:1cqw 1.2cqw;overflow:auto}
+.b-setting-panel h2{font-size:2.3cqw;font-weight:600;margin:0 0 1.5cqw}
+.b-setting-panel p{font-size:1.65cqw;margin-top:1cqw}
+.b-color-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw}
+.b-color-grid button{min-height:8cqw;background:linear-gradient(0deg,#68707555,transparent);border:2px solid #b6b7aa;color:#f9f6e8;font-size:1.65cqw;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.7cqw;padding:.6cqw}
+.b-color-grid button.selected{border-color:#ffefbc;box-shadow:inset 0 -3px #ffefbc}
+.b-color-dot{display:block;width:3cqw;height:3cqw;border-radius:50%;border:2px solid #eeeeea}
+.b-radio-list{max-height:75%}
+.b-radio-row{border-bottom:1px solid #b8b7a666;display:flex;justify-content:space-between;align-items:center;gap:1cqw;padding:.65cqw;min-height:5.5cqw}
+.b-radio-row strong{font-size:1.85cqw;font-weight:500}
+.b-radio-row small{font-size:1.25cqw;display:block;color:#dad9cc}
+.b-radio-row button{min-height:4.3cqw;padding:.7cqw;background:#343b43;border:1px solid #cac7b1;color:#fff;font-size:1.45cqw}
+.b-main-action,.b-destination{min-height:5.8cqw;padding:1cqw 1.4cqw;border:2px solid #e3dfca;background:#263747;color:#fff;font-size:1.9cqw;display:flex;align-items:center;gap:1cqw}
+.b-main-action svg,.b-destination svg{width:2.7cqw;height:2.7cqw}
+.b-destination{width:100%;border-width:0 0 1px;text-align:left}
+.b-lights .setting-row{min-height:6cqw;font-size:2.1cqw}
