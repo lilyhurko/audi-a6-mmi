@@ -8,7 +8,6 @@ export default function AccessibleVersion({screen, go, back, scenario, library, 
    if(!track)return
    go('player')
    library.play(track)
-   if(scenario?.id==='S1') finish({track:track.title})
  }
  const route=()=>{
    go('nav-preview')
