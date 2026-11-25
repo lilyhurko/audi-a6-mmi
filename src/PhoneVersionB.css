@@ -1,0 +1,40 @@
+.b-phone { height:100%; display:flex; flex-direction:column; gap:.9cqw; padding:.8cqw; border-radius:1.3cqw; background:#101823; color:#fff; text-shadow:none; }
+.b-phone button { color:inherit; cursor:pointer; }
+.b-phone svg { width:1.9cqw; height:1.9cqw; flex-shrink:0; }
+.b-phone>header { display:flex; align-items:center; gap:.6cqw; }
+.b-phone>header h1 { font-size:1.9cqw; margin:0; flex:1; }
+.b-phone>header button { background:none; border:0; padding:.3cqw; display:flex; }
+.b-phone-search { background:#283444; border-radius:1cqw; display:flex; align-items:center; gap:.7cqw; padding:.9cqw; }
+.b-phone-search input { min-width:0; width:100%; border:0; background:none; color:#fff; font-size:1.8cqw; outline:none; }
+.b-phone-search input::placeholder { color:#f3f6fb; }
+.b-phone-search:focus-within { outline:2px solid #fff; }
+.b-phone-tabs { display:grid; grid-template-columns:1fr 1fr; gap:.8cqw; }
+.b-phone-tabs button { display:flex; flex-direction:column; justify-content:center; align-items:center; gap:.65cqw; background:#283444; border:2px solid transparent; border-radius:1cqw; min-height:6.6cqw; font-size:1.7cqw; font-weight:600; }
+.b-phone-tabs button[aria-pressed=true] { border-color:#c5d6eb; }
+.b-phone-selected { margin-top:auto; display:flex; align-items:center; gap:.8cqw; background:#283444; border-radius:1cqw; padding:1cqw; min-height:6cqw; }
+.b-phone-selected>div { flex:1; min-width:0; }
+.b-phone-selected strong { font-size:1.8cqw; }
+.b-phone-selected small { display:block; margin-top:.6cqw; font-size:1.3cqw; }
+.b-phone-call { border:0; background:#16713c; border-radius:1cqw; width:4.9cqw; height:4.9cqw; display:flex; justify-content:center; align-items:center; }
+.b-phone-call:disabled { opacity:.45; cursor:default; }
+.b-phone-results { overflow:auto; flex:1; min-height:0; background:#202c3b; border-radius:.8cqw; }
+.b-phone-results>div { display:flex; border-bottom:1px solid #647084; }
+.b-phone-results button { border:0; background:none; padding:.8cqw; font-size:1.7cqw; }
+.b-phone-contact { display:flex; align-items:center; gap:.8cqw; flex:1; width:100%; text-align:left; }
+.b-phone-contact small { display:block; font-size:1.2cqw; margin-top:.3cqw; }
+.b-phone-results p { font-size:1.4cqw; padding:.6cqw 1cqw; }
+.b-phone button:focus-visible { outline:2px solid white; outline-offset:-2px; }
+
+/* Audi MMI finish, retaining the simplified B phone layout. */
+.version-b .b-phone { background:radial-gradient(ellipse at 70% 70%,#11152b,#050916 80%); border-radius:0; color:#f5f0db; text-shadow:0 0 2px #f2eac233; }
+.version-b .b-phone>header { border-bottom:2px solid #d9d6bd; padding-bottom:.6cqw; }
+.version-b .b-phone>header h1 { font-weight:500; }
+.version-b .b-phone>header button { background:linear-gradient(0deg,#969b7955,transparent); border-left:1px solid #d4d1b27a; padding:.5cqw; }
+.version-b .b-phone-search { border-radius:.2cqw; border:1px solid #b3b59c; background:linear-gradient(0deg,#7b82622b,#0a0e1b); }
+.version-b .b-phone-search input,.version-b .b-phone-search input::placeholder { color:#f5f0db; }
+.version-b .b-phone-tabs button { border-radius:.15cqw; border-width:0 1px 2px; border-color:#b8bca17d #b8bca17d #e0ddc2; background:linear-gradient(0deg,#9aa37b2c,transparent 60%); box-shadow:0 1px 3px #d9e3bd33; }
+.version-b .b-phone-tabs button[aria-pressed=true] { border-bottom-color:#9fd228; background:linear-gradient(0deg,#90bd2733,transparent 70%); }
+.version-b .b-phone-selected { border-radius:.15cqw; border:1px solid #aeb29888; background:linear-gradient(0deg,#68735638,#090e1d); }
+.version-b .b-phone-call { border-radius:.3cqw; border:1px solid #a2d277; background:linear-gradient(0deg,#376a27,#142d1e); box-shadow:inset 0 -2px #92ca45; }
+.version-b .b-phone-results { border-radius:.15cqw; background:#0a0f1c; border:1px solid #92987e88; }
+.version-b .b-phone-results>div { border-color:#a6ab8b55; }
