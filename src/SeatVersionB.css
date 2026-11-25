@@ -1,0 +1,43 @@
+.b-seat { height:100%; overflow:auto; padding:.7cqw; background:#101823; border-radius:1.2cqw; color:#fff; text-shadow:none; display:flex; flex-direction:column; gap:.8cqw; }
+.b-seat>header { display:flex; align-items:center; gap:.6cqw; }
+.b-seat h1 { flex:1; margin:0; font-size:1.8cqw; }
+.b-seat svg { width:1.7cqw; height:1.7cqw; }
+.b-seat>header button { display:flex; border:0; background:none; padding:.3cqw; }
+.b-seat button { color:inherit; cursor:pointer; }
+.b-seat-tabs { display:grid; grid-template-columns:1fr 1fr; gap:.7cqw; }
+.b-seat-tabs button { border:1px solid transparent; border-radius:2cqw; background:none; color:#bbc2cc; padding:.4cqw; font-size:1.3cqw; }
+.b-seat-tabs button[aria-pressed=true] { background:#394354; color:white; border-color:#b4c4d7; }
+.b-seat-card { background:#283444; border-radius:1cqw; padding:.8cqw; }
+.b-seat-card h2 { display:flex; align-items:center; justify-content:space-between; font-size:1.6cqw; margin:0 0 .6cqw; }
+.b-seat-actions { display:grid; grid-template-columns:1fr 1fr; gap:.7cqw; }
+.b-seat-actions button { border:0; border-radius:.6cqw; background:#435167; padding:.6cqw; min-height:4.8cqw; font-size:1.6cqw; display:flex; flex-direction:column; align-items:center; gap:.3cqw; }
+.b-seat-value { display:block; font-size:1.1cqw; margin-top:.4cqw; }
+.b-seat-easy { display:flex; align-items:center; justify-content:space-between; gap:1cqw; font-size:1.5cqw; }
+.b-seat-easy button { border:0; background:#435167; border-radius:.5cqw; padding:.5cqw .7cqw; display:flex; align-items:center; gap:.7cqw; font-size:1.25cqw; }
+.b-seat-stepper { display:flex; align-items:center; gap:.6cqw; margin-top:.6cqw; }
+.b-seat-stepper button { flex:1; padding:.7cqw; border:1px solid #8193ac; border-radius:.5cqw; background:#354256; font-size:1.4cqw; }
+.b-seat-stepper output { min-width:2cqw; text-align:center; font-size:1.3cqw; }
+.b-seat button:disabled { opacity:.4; cursor:default; }
+.b-seat button:focus-visible { outline:2px solid white; outline-offset:-2px; }
+
+/* Match the approved B seat sketch while keeping adjustments inline. */
+.b-seat { gap:1cqw; padding:1cqw; }
+.b-seat-tabs button[aria-pressed=true] { background:#242424; border-color:transparent; }
+.b-seat-card { padding:1cqw; }
+.b-seat-actions button { min-height:5.3cqw; }
+.b-seat-value { font-size:1cqw; color:#d0d7e1; }
+.b-seat-easy { display:block; }
+.b-seat-easy-heading,.b-seat-easy-options { display:flex; align-items:center; justify-content:space-between; gap:1cqw; }
+.b-seat-easy-heading>button { font-size:1.1cqw; border-radius:1cqw; padding:.3cqw .65cqw; }
+.b-seat-easy-options { margin-top:.8cqw; font-size:1.25cqw; }
+
+/* Original MMI materials, with the B controls kept on one screen. */
+.version-b .b-seat { background:radial-gradient(ellipse at 70% 70%,#11152b,#050916 80%); border-radius:0; color:#f5f0db; text-shadow:0 0 2px #f2eac233; }
+.version-b .b-seat>header { border-bottom:2px solid #d9d6bd; padding-bottom:.6cqw; }
+.version-b .b-seat h1 { font-weight:500; }
+.version-b .b-seat>header button { background:linear-gradient(0deg,#969b7955,transparent); border-left:1px solid #d4d1b27a; padding:.5cqw; }
+.version-b .b-seat-tabs button { border-radius:0; border:1px solid #aeb29888; background:linear-gradient(0deg,#68735638,transparent); color:#d9dac9; }
+.version-b .b-seat-tabs button[aria-pressed=true] { border-color:#aeb29888; border-bottom:2px solid #ed2437; background:linear-gradient(0deg,#b51c3444,transparent); color:#f5f0db; }
+.version-b .b-seat-card { border-radius:.15cqw; border:1px solid #92987e66; background:linear-gradient(0deg,#77816118,#0a0e1c); }
+.version-b .b-seat-actions button,.version-b .b-seat-stepper button { border-radius:.15cqw; border:1px solid #b6baa077; border-bottom:2px solid #d9d6bd; background:linear-gradient(0deg,#929b6b44,#111625); }
+.version-b .b-seat-easy button { border-radius:.15cqw; background:linear-gradient(0deg,#929b6b44,#111625); border:1px solid #b6baa077; }
